@@ -1,12 +1,12 @@
 from socket import *
 import json
+
 class Peer:
     def __init__(self, peer_id, address,metadata_file):
         self.peer_id = peer_id
         self.address = address
         self.connected_peers = []
         self.metadata = self.load_metadata(metadata_file)
-
 
     def load_metadata(self, metadata_file):
         try:
@@ -73,10 +73,15 @@ class Peer:
                 else:
                     print(f"Invalid request received from {peer_address}")
             except Exception as e:
-                print(f"Error uploading the requested piece {piece_index}to {peer_address} : " str(e))
-
-
-
+                print(f"Error uploading the requested piece {piece_index}to {peer_address} : ", str(e))
 
     def __str__(self):
         return f"Peer {self.peer_id} at {self.address}"
+    
+if __name__ == '__main__':
+    peer = Peer(f'peer1', ("localhost", 8000), "/home/kazuki/hybrid_p2p/data_dir/chunk_data/metadata.json")
+    print(peer)
+    peer.connect(("localhost", 8001))
+    peer.download(0)
+    peer.upload(0)
+    peer.disconnect(("localhost", 8001))

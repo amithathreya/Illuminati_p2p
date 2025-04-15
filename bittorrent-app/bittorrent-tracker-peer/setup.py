@@ -5,7 +5,7 @@ setup(
     version='0.1.0',
     author='Amith Athreya H',
     author_email='aathreyah@acm.org',
-    description='A BitTorrent-like hybrif P2P implementation ',
+    description='A BitTorrent-like hybrid P2P File sharing system ',
     packages=find_packages(),
     install_requires=[
     ],
