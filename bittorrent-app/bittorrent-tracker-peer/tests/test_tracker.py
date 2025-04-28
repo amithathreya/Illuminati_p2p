@@ -1,27 +1,22 @@
-import unittest
-from tracker.tracker import Tracker
+import socket
+import json
 
-class TestTracker(unittest.TestCase):
 
-    def setUp(self):
-        self.tracker = Tracker()
+HOST,PORT = "0.0.0.0",8080
 
-    def test_add_peer(self):
-        self.tracker.add_peer('peer1')
-        self.assertIn('peer1', self.tracker.get_peers())
+message = {"type":"register", "peer_ip":"0.0.0.0", "peer_port": 8080, "file_hash": ["1234567890abcdef", "abcdef1234567890"]}
 
-    def test_remove_peer(self):
-        self.tracker.add_peer('peer2')
-        self.tracker.remove_peer('peer2')
-        self.assertNotIn('peer2', self.tracker.get_peers())
+data = json.dumps(message)
 
-    def test_get_peers(self):
-        self.tracker.add_peer('peer3')
-        self.tracker.add_peer('peer4')
-        peers = self.tracker.get_peers()
-        self.assertEqual(len(peers), 2)
-        self.assertIn('peer3', peers)
-        self.assertIn('peer4', peers)
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+try:
+    sock.connect((HOST,PORT))
+    sock.sendall(data.encode())
 
-if __name__ == '__main__':
-    unittest.main()
+    response = sock.recv(4096)
+    print("Received response:", response.decode())
+finally:
+    sock.close()
+
+print(f'sent message: {data}')
+print(f'received response: {response.decode()}')
