@@ -4,7 +4,8 @@ import json
 
 HOST,PORT = "0.0.0.0",8080
 
-message = {"type":"register", "peer_ip":"0.0.0.0", "peer_port": 8080, "file_hash": ["1234567890abcdef", "abcdef1234567890"]}
+
+message = {"type":"register", "peer_ip":"0.0.0.0", "peer_port": 8080, "file_hash": ["1234567890abcdef","abcdef1234567890"]}
 
 data = json.dumps(message)
 
@@ -16,7 +17,9 @@ try:
     response = sock.recv(4096)
     print("Received response:", response.decode())
 finally:
+    print("\n")
+    print("\n")
+    print("\n")
+    signal = input("Press <RETURN> to close the connection...")
     sock.close()
-
-print(f'sent message: {data}')
-print(f'received response: {response.decode()}')
+    print("Connection closed.")
