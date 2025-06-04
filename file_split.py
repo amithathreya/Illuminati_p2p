@@ -14,28 +14,34 @@ except Exception as e:
 
 async def split_and_store_file(file_path):
     try:
+        file_name, file_extension = os.path.splitext(file_path)  # Extract file extension
         with open(file_path, "rb") as f:
             file_hash = hashlib.sha256(f.read()).hexdigest()
 
-        chunk_size = 256 * 1024  
+        if collection.find_one({"file_hash": file_hash}):
+            print(f"File '{file_path}' with hash '{file_hash}' already exists in the database. Skipping...")
+            return
+
+        chunk_size = 256 * 1024
         chunk_id = 0
 
         with open(file_path, "rb") as f:
             while chunk := f.read(chunk_size):
-                chunk_data = chunk.hex()  
-                await store_chunk(file_hash, chunk_id, chunk_data)
+                chunk_data = chunk.hex()
+                await store_chunk(file_hash, chunk_id, chunk_data, file_extension)
                 chunk_id += 1
 
         print(f"File '{file_path}' split and stored successfully.")
     except Exception as e:
         print(f"Error processing file '{file_path}': {e}")
 
-async def store_chunk(file_hash, chunk_id, chunk_data):
+async def store_chunk(file_hash, chunk_id, chunk_data, file_extension):
     try:
         collection.insert_one({
             "file_hash": file_hash,
             "chunk_id": chunk_id,
-            "chunk_data": chunk_data
+            "chunk_data": chunk_data,
+            "file_extension": file_extension  # Store file extension
         })
         print(f"Stored chunk {chunk_id} for file hash {file_hash}.")
     except Exception as e:
